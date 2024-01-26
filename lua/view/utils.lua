@@ -18,10 +18,10 @@ M.set_main_bufnr = function(bufnr, main_bufnr)
 end
 
 ---@param bufnr integer
----@param vbuffers_makers VBuffersMaker[]
----@return VBuffer[]?
+---@param vbuffers_makers view.VBuffersMaker[]
+---@return view.VBuffer[]?
 M.create_vbuffers = function(bufnr, vbuffers_makers)
-  ---@type VBuffer[]
+  ---@type view.VBuffer[]
   local vbuffers = {}
 
   -- adding the default vbuffer into the 1st position
@@ -29,13 +29,13 @@ M.create_vbuffers = function(bufnr, vbuffers_makers)
 
   for vbuffer_maker_name, vbuffer_maker in pairs(vbuffers_makers) do
     if (vbuffer_maker.is_buf_viewable(bufnr)) then
-      local vbufnr = vbuffer_maker.make_view_buffer(bufnr)
+      local vbufnr = vbuffer_maker.viewer(bufnr)
 
-      if vbufnr ~= 0 and vim.api.nvim_buf_is_valid(vbufnr) then
+      if vbufnr and vbufnr ~= 0 and vim.api.nvim_buf_is_valid(vbufnr) then
         table.insert(vbuffers, { vbuffer_maker_name = vbuffer_maker_name, bufnr = vbufnr })
         M.set_main_bufnr(vbufnr, bufnr)
       else
-        -- warn that vbufnr is not valid
+        -- error that creating view buffer has failed
         return nil
       end
     end
