@@ -16,9 +16,8 @@ M.bufs_data = {}
 local setup_auto_cmds = function()
   vim.api.nvim_create_autocmd({ "BufRead" }, {
     group = augroup_view,
-    callback = function()
-      local bufnr = tonumber(vim.fn.expand('<abuf>'))
-      if not bufnr then return end
+    callback = function(ev)
+      local bufnr = ev.buf
 
       if utils.get_main_bufnr(bufnr) then
         -- do nothing
